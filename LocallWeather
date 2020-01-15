@@ -1,0 +1,22 @@
+import requests
+        
+request = requests.get('http://get.geojs.io/v1/ip.json')
+myip = request.json()['ip']
+
+request = requests.get('https://get.geojs.io/v1/ip/geo/{0}.json'.format(myip))
+geodata = request.json()
+
+request = requests.get('https://api.weather.gov/points/{0},{1}'.format(geodata['latitude'], geodata['longitude']))
+weatherdata = request.json()
+
+request = requests.get(weatherdata['properties']['forecastHourly'])
+forecastHourly = request.json()
+forecastHourly = forecastHourly['properties']['periods']
+
+k = 0;
+print(f'Weather in {geodata["city"]}')
+for i in forecastHourly:
+    if k>6:
+        break
+    print(f'+{k}:00hrs | {i["temperature"]} deg-F')
+    k+=1
